@@ -9,6 +9,7 @@ request.onreadystatechange=function(){
     if (this.readyState==4 && this.status==200){
         var obj=JSON.parse(request.responseText);
         parseData(obj);
+        grid(obj);
         var date=createTimeStamp();
         console.log(date);
 
@@ -22,6 +23,41 @@ request.onreadystatechange=function(){
         }
     }
 }
+
+function grid(jsonObj) {
+    var header=document.getElementById("header");
+    var tmpHeader="";
+    var tmpData="";
+    var first=new Boolean(true);
+    Object.keys(jsonObj).forEach(function(key) {
+        let inner=jsonObj[key];
+        Object.keys(inner).forEach(function(key2) {
+            if (first) {
+                tmpHeader+=" "+key2;
+                tmpData+=" "+inner[key2];
+            }
+            else {
+                tmpData+=" "+inner[key2];
+            }
+        });
+        addRecord(tmpHeader,tmpData,first);
+        tmpData="";
+        first=false;
+   });
+};
+
+function addRecord(header,data,first) {
+    var detail=document.getElementById("detail");
+    if (first) {
+        var head=document.createElement("div");
+        head.innerHTML="<div style=''>"+header+"</div>";
+        detail.appendChild(head);
+    }
+
+    var newdiv=document.createElement("div");
+    newdiv.innerHTML="<div style=''>" + data+ "</div>";
+    detail.appendChild(newdiv);
+};
 
 function parseData(jsonObj) {
     Object.keys(jsonObj).forEach(function(key) {
@@ -40,7 +76,6 @@ function parseData(jsonObj) {
             else if (typeof data==="undefined") {
                 data="UNDEFINED";
             }
-            //console.log(data);
         });
     });
 };
